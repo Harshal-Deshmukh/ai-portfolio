@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Upload Resume</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; }
+    input, button { display: block; margin: 10px 0; padding: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Upload Resume (Admin)</h2>
+  <input type="password" id="pw" placeholder="Admin password">
+  <input type="file" id="file" accept=".pdf,.pptx">
+  <button id="btn">Upload</button>
+  <p id="status"></p>
+
+  <script>
+    document.getElementById("btn").addEventListener("click", async () => {
+      const status = document.getElementById("status");
+      const file = document.getElementById("file").files[0];
+      const pw = document.getElementById("pw").value;
+      if (!file) { status.textContent = "Pehle file choose kar"; return; }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      status.textContent = "Uploading...";
+
+      try {
+        const res = await fetch("/upload", {
+          method: "POST",
+          headers: { "X-Admin-Password": pw },
+          body: formData
+        });
+        const data = await res.json();
+        status.textContent = res.ok ? "Resume loaded ✓" : "Error: " + data.detail;
+      } catch (err) {
+        status.textContent = "Server se connect nahi ho paya";
+      }
+    });
+  </script>
+</body>
+</html>
