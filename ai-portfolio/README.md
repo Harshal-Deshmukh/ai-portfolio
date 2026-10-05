@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Powered by Groq](https://img.shields.io/badge/Inference-Groq%20LPU-f55036.svg)](https://groq.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
 
 An interactive, AI-driven portfolio chatbot built with **FastAPI**, **Groq**, and **modern responsive web tech**. 
 
@@ -106,10 +106,9 @@ You can run the application directly using Python or Uvicorn:
 
 ```bash
 # Option A: Run directly
-python ai-portfolio/app.py
+python app.py
 
 # Option B: Run via Uvicorn with auto-reload
-cd ai-portfolio
 uvicorn app:app --reload --port 8000
 ```
 
@@ -143,21 +142,6 @@ Open your browser and navigate to:
 | `/resume/available`| `GET` | Checks if a downloadable resume file exists | None |
 | `/resume/download` | `GET` | Downloads the current resume file | None |
 
-### Example Request (`POST /chat`)
-```json
-{
-  "question": "What frameworks and languages do you have experience with?",
-  "session_id": "session-abc-123"
-}
-```
-
-### Example Response
-```json
-{
-  "answer": "According to the resume, key skills include Python (FastAPI), Kotlin (Jetpack Compose), Firebase, and C++ for Data Structures & Algorithms."
-}
-```
-
 ---
 
 ## 🛡️ Security & Performance Highlights
@@ -169,26 +153,9 @@ Open your browser and navigate to:
 
 ---
 
-## 🚢 Deployment
-
-### Deploy on Render / Railway / Fly.io
-
-1. **Build Command**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. **Start Command**:
-   ```bash
-   uvicorn ai-portfolio.app:app --host 0.0.0.0 --port $PORT
-   ```
-3. **Environment Variables**:
-   Add `GROQ_API_KEY`, `GROQ_MODEL`, `ADMIN_PASSWORD`, and `DEFAULT_NAME` in your host's dashboard.
-
----
-
 ## 📄 License
 
-This project is open-source under the [MIT License](LICENSE).
+This project is open-source under the [MIT License](../LICENSE).
 
 ---
 

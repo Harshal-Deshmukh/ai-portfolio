@@ -2,29 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Upload Resume</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Portal - AI Portfolio</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; }
-    input, button { display: block; margin: 10px 0; padding: 8px; }
+    :root {
+      --accent: #6c5ce7;
+      --accent2: #4a90e2;
+      --bg: #0f1226;
+      --card: #181c3a;
+      --border: #2a2f63;
+      --text: #e8eaff;
+      --muted: #9aa0c7;
+      --success: #2ed573;
+      --danger: #ff4757;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #1d2250, var(--bg));
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #fff; }
+    h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    p.subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #3a4080;
+      background: #11142e;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="password"]:focus { border-color: var(--accent); }
+    .file-dropzone {
+      border: 2px dashed #3a4080;
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      background: #11142e;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .file-dropzone:hover, .file-dropzone.dragover {
+      border-color: var(--accent);
+      background: #161b3d;
+    }
+    .file-dropzone input[type="file"] {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .file-icon { font-size: 32px; margin-bottom: 8px; }
+    .file-info { font-size: 13px; color: var(--muted); }
+    .file-name { font-weight: 600; color: #fff; margin-top: 6px; font-size: 13px; }
+    button#btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 6px;
+    }
+    button#btn:hover:not(:disabled) { opacity: 0.95; transform: translateY(-1px); }
+    button#btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status-box {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none;
+      line-height: 1.4;
+    }
+    .status-success {
+      display: block;
+      background: rgba(46, 213, 115, 0.15);
+      border: 1px solid var(--success);
+      color: #7bed9f;
+    }
+    .status-error {
+      display: block;
+      background: rgba(255, 71, 87, 0.15);
+      border: 1px solid var(--danger);
+      color: #ff6b81;
+    }
   </style>
 </head>
 <body>
-  <h2>Upload Resume (Admin)</h2>
-  <input type="password" id="pw" placeholder="Admin password">
-  <input type="file" id="file" accept=".pdf,.pptx">
-  <button id="btn">Upload</button>
-  <p id="status"></p>
+  <div class="card">
+    <a href="/" class="back-link">← Back to Portfolio</a>
+    <h2>Upload Resume</h2>
+    <p class="subtitle">Upload a PDF, PPTX, or TXT file to update the candidate AI brain.</p>
+
+    <div class="form-group">
+      <label for="pw">Admin Password</label>
+      <input type="password" id="pw" placeholder="Enter configured admin password">
+    </div>
+
+    <div class="form-group">
+      <label>Resume File (Max 5MB)</label>
+      <div class="file-dropzone" id="dropzone">
+        <input type="file" id="file" accept=".pdf,.pptx,.txt">
+        <div class="file-icon">📄</div>
+        <div class="file-info">Click to browse or drop resume file here</div>
+        <div class="file-name" id="fileName">Supported: .pdf, .pptx, .txt</div>
+      </div>
+    </div>
+
+    <button id="btn">Update & Index Resume</button>
+    <div id="status" class="status-box"></div>
+  </div>
 
   <script>
-    document.getElementById("btn").addEventListener("click", async () => {
-      const status = document.getElementById("status");
-      const file = document.getElementById("file").files[0];
-      const pw = document.getElementById("pw").value;
-      if (!file) { status.textContent = "Pehle file choose kar"; return; }
+    const fileInput = document.getElementById("file");
+    const fileName = document.getElementById("fileName");
+    const dropzone = document.getElementById("dropzone");
+    const statusBox = document.getElementById("status");
+    const uploadBtn = document.getElementById("btn");
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        fileName.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+      }
+    });
+
+    ['dragenter', 'dragover'].forEach(name => {
+      dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(name => {
+      dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+    });
+
+    uploadBtn.addEventListener("click", async () => {
+      const file = fileInput.files[0];
+      const pw = document.getElementById("pw").value.trim();
+
+      statusBox.className = "status-box";
+      statusBox.style.display = "none";
+
+      if (!pw) {
+        statusBox.textContent = "Please enter the admin password.";
+        statusBox.className = "status-box status-error";
+        return;
+      }
+      if (!file) {
+        statusBox.textContent = "Please select a resume file (.pdf, .pptx, or .txt).";
+        statusBox.className = "status-box status-error";
+        return;
+      }
 
       const formData = new FormData();
       formData.append("file", file);
-      status.textContent = "Uploading...";
+
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = "Parsing & indexing resume...";
 
       try {
         const res = await fetch("/upload", {
@@ -33,9 +199,19 @@
           body: formData
         });
         const data = await res.json();
-        status.textContent = res.ok ? "Resume loaded ✓" : "Error: " + data.detail;
+        if (res.ok) {
+          statusBox.textContent = "✓ Resume parsed & indexed! (" + data.chars + " characters processed)";
+          statusBox.className = "status-box status-success";
+        } else {
+          statusBox.textContent = "✕ Error: " + (data.detail || "Upload failed");
+          statusBox.className = "status-box status-error";
+        }
       } catch (err) {
-        status.textContent = "Server se connect nahi ho paya";
+        statusBox.textContent = "✕ Failed to reach the server. Please check your connection.";
+        statusBox.className = "status-box status-error";
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = "Update & Index Resume";
       }
     });
   </script>
